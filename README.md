@@ -1,4 +1,6 @@
 # maps
+## Demo
+<img src="./demo.gif" width="230">
 ## Install React Native
 ```
 $ yarn add react-native
