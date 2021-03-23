@@ -27,7 +27,7 @@ export const GOOGLE_API_KEY: string =
 ```
 3. Add api key in `ios/Maps/AppDelegate.m`
 ```
-#line 45
+# line 45
 +  [GMSServices provideAPIKey:@"YOUR_API_KEY"]; // add this line using the api key obtained from Google Console
 ```
 ## Start app with ios simulator
