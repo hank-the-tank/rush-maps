@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react"
-import { Button, IconButton, Searchbar } from "react-native-paper"
+import { Button, IconButton } from "react-native-paper"
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete"
 import {
   Text,
@@ -24,20 +24,30 @@ import MapViewDirections from "react-native-maps-directions"
 
 export default function App() {
   const [modalVisible, setModalVisible] = useState(false)
+  const [
+    modalConfirmCurrentLocation,
+    setModalConfirmCurrentLocation,
+  ] = useState(false)
   // Initial location
-  const initialPosition = {
+  const initialLocation = {
     latitude: -36.850000262368575,
     longitude: 174.77820276942214,
     latitudeDelta: 0.05,
     longitudeDelta: 0.02,
   }
+  const [modalCurrentLocationDetail, setModalCurrentLocationDetail] = useState(
+    false
+  )
+
   // Hook for updating destinations
   const [destinations, setDestinations] = React.useState(initialDestinations)
+  // A place to save destinations before generating a route for the user
   const [destinationList, setDestinationList] = React.useState<
     destinationProps[]
   >([])
+
   // Hook for currenLocation
-  const [currentLocation, setPosition] = React.useState(initialPosition)
+  const [currentLocation, setCurrentLocation] = React.useState(initialLocation)
 
   // Submit search
   const searchAutoComplete = (name: string, lat: number, lng: number) => {
@@ -49,11 +59,13 @@ export default function App() {
     })
     setDestinations(newDestinations)
   }
-  // Ask for request
+
+  // Ask for permission to get user location
   async function requestLocation() {
     const response = await request(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE)
     return response
   }
+
   // Get current location
   const locateCurrentPosition = () => {
     Geolocation.getCurrentPosition(
@@ -65,32 +77,44 @@ export default function App() {
           latitudeDelta: 0.01,
           longitudeDelta: 0.005,
         }
-        setPosition(region)
+        setCurrentLocation(region)
+        setModalConfirmCurrentLocation(!modalConfirmCurrentLocation)
+        setModalCurrentLocationDetail(!modalCurrentLocationDetail)
       },
       (error) => Alert.alert(error.message)
     )
   }
+
+  // Ask for getting back to current location
+  const confirmCurrentLocation = useCallback(() => {
+    setModalConfirmCurrentLocation(!modalConfirmCurrentLocation)
+  }, [modalConfirmCurrentLocation])
+
   // Remove an item from destination list
   const removeItem = (id: string) => {
     const filteredList = destinations.filter((item) => item.id !== id)
     setDestinations(filteredList)
   }
 
+  // Pop up modal for confirming to get directions
   const confirmDirections = useCallback(() => {
     setModalVisible(!modalVisible)
-    useEffect
   }, [modalVisible])
 
+  // Generate route for the user
   const setDirection = useCallback(() => {
     setModalVisible(!modalVisible)
     setDestinationList(destinations)
   }, [modalVisible])
+
+  // The places that user will stop by
   const waypoints = destinationList.map((item) => {
     return { latitude: item.latitude, longitude: item.longitude }
   })
+
   useEffect(() => {
     requestLocation()
-  }, [destinations, destinationList])
+  }, [])
 
   return (
     <View>
@@ -188,9 +212,10 @@ export default function App() {
             },
             textInputContainer: {
               backgroundColor: "white",
-              borderBottomWidth: 1,
+              borderTopWidth: 0,
               borderBottomColor: "rgba(55, 55, 55, 0.5)",
               width: "85%",
+              borderRadius: 10,
             },
             textInput: {
               height: 50,
@@ -253,7 +278,7 @@ export default function App() {
         size={65}
         style={styles.gps}
         onPress={() => {
-          locateCurrentPosition()
+          confirmCurrentLocation()
         }}
       ></IconButton>
       <View>
@@ -295,6 +320,92 @@ export default function App() {
           </View>
         </Modal>
       </View>
+      <View>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalConfirmCurrentLocation}
+        >
+          <View
+            style={{
+              flex: 2,
+              flexDirection: "row-reverse",
+              justifyContent: "center",
+              alignItems: "center",
+              marginTop: 150,
+            }}
+          >
+            <Pressable onPress={locateCurrentPosition}>
+              <Button
+                style={{ margin: 10 }}
+                labelStyle={{ fontSize: 20, height: 30, width: 100 }}
+                mode="contained"
+                color="black"
+                uppercase={false}
+              >
+                Confirm
+              </Button>
+            </Pressable>
+            <Pressable
+              onPress={() =>
+                setModalConfirmCurrentLocation(!modalConfirmCurrentLocation)
+              }
+            >
+              <Button
+                mode="outlined"
+                color="black"
+                labelStyle={{ fontSize: 20, height: 30, width: 100 }}
+                style={{
+                  margin: 10,
+                  backgroundColor: "rgba(255,255,255, 0.8)",
+                }}
+                uppercase={false}
+              >
+                Go Back
+              </Button>
+            </Pressable>
+          </View>
+        </Modal>
+      </View>
+      <View>
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={modalCurrentLocationDetail}
+        >
+          <View
+            style={{
+              flex: 1,
+              flexDirection: "row-reverse",
+              justifyContent: "center",
+              alignItems: "center",
+              marginBottom: 60,
+            }}
+          >
+            <Pressable
+              onPress={() =>
+                setModalCurrentLocationDetail(!modalCurrentLocationDetail)
+              }
+            >
+              <Button
+                mode="outlined"
+                color="black"
+                labelStyle={{ fontSize: 20, height: 30, width: 200 }}
+                style={{
+                  margin: 10,
+                  backgroundColor: "rgba(255,255,255, 0.8)",
+                }}
+                uppercase={false}
+              >
+                <Text>
+                  {currentLocation.latitude.toFixed(2)},{" "}
+                  {currentLocation.longitude.toFixed(2)}
+                </Text>
+              </Button>
+            </Pressable>
+          </View>
+        </Modal>
+      </View>
     </View>
   )
 }
@@ -311,9 +422,6 @@ const styles = StyleSheet.create({
     width: Dimensions.get("window").width,
     height: Dimensions.get("window").height,
   },
-  search: {
-    // width: "85%",
-  },
   gps: {
     flex: 1,
     position: "absolute",
@@ -328,7 +436,9 @@ const styles = StyleSheet.create({
     flexDirection: "column",
   },
   item: {
-    padding: 10,
+    paddingTop: 15,
+    paddingBottom: 15,
+    fontSize: 18,
   },
   buttonLabel: {
     marginLeft: 30,
