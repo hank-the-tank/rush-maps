@@ -6,7 +6,7 @@
     "web": "expo start --web",
     "start": "react-native start",
     "test": "jest",
-    "prettier": "prettier --config .prettierrc '*.tsx' --write"
+    "prettier": "npx prettier --write ."
   },
   "dependencies": {
     "@react-native-community/geolocation": "^2.0.2",

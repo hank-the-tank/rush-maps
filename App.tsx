@@ -1,6 +1,6 @@
-import React, { useCallback, useEffect, useState } from "react"
-import { Button, IconButton } from "react-native-paper"
-import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete"
+import React, { useCallback, useEffect, useState } from 'react'
+import { Button, IconButton } from 'react-native-paper'
+import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete'
 import {
   Text,
   Alert,
@@ -11,42 +11,47 @@ import {
   TouchableOpacity,
   View,
   Modal,
-  Pressable,
-} from "react-native"
-import MapView, { Marker } from "react-native-maps"
-import { request, PERMISSIONS } from "react-native-permissions"
-import { initialDestinations, destinationProps } from "./destinations"
-import "react-native-get-random-values"
-import { v4 as uuidv4 } from "uuid"
-import Geolocation from "@react-native-community/geolocation"
-import { GOOGLE_API_KEY } from "./config/keys"
-import MapViewDirections from "react-native-maps-directions"
+  Pressable
+} from 'react-native'
+import MapView, { Marker } from 'react-native-maps'
+import { request, PERMISSIONS } from 'react-native-permissions'
+import { initialDestinations, destinationProps } from './destinations'
+import 'react-native-get-random-values'
+import { v4 as uuidv4 } from 'uuid'
+import Geolocation from '@react-native-community/geolocation'
+import { GOOGLE_API_KEY } from './config/keys'
+import MapViewDirections from 'react-native-maps-directions'
+import { styles } from './styles'
 
 export default function App() {
-  const [modalVisible, setModalVisible] = useState(false)
   const [
     modalConfirmCurrentLocation,
-    setModalConfirmCurrentLocation,
+    setModalConfirmCurrentLocation
   ] = useState(false)
+
   // Initial location
   const initialLocation = {
     latitude: -36.850000262368575,
     longitude: 174.77820276942214,
     latitudeDelta: 0.05,
-    longitudeDelta: 0.02,
+    longitudeDelta: 0.02
   }
+
+  const [modalVisible, setModalVisible] = useState(false)
+
   const [modalCurrentLocationDetail, setModalCurrentLocationDetail] = useState(
     false
   )
 
-  // Hook for updating destinations
+  // Hooks for updating destinations
   const [destinations, setDestinations] = React.useState(initialDestinations)
+
   // A place to save destinations before generating a route for the user
   const [destinationList, setDestinationList] = React.useState<
     destinationProps[]
   >([])
 
-  // Hook for currenLocation
+  // Hooks for currenLocation
   const [currentLocation, setCurrentLocation] = React.useState(initialLocation)
 
   // Submit search
@@ -55,7 +60,7 @@ export default function App() {
       id: uuidv4(),
       name: name,
       latitude: lat,
-      longitude: lng,
+      longitude: lng
     })
     setDestinations(newDestinations)
   }
@@ -75,7 +80,7 @@ export default function App() {
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
           latitudeDelta: 0.01,
-          longitudeDelta: 0.005,
+          longitudeDelta: 0.005
         }
         setCurrentLocation(region)
         setModalConfirmCurrentLocation(!modalConfirmCurrentLocation)
@@ -112,6 +117,7 @@ export default function App() {
     return { latitude: item.latitude, longitude: item.longitude }
   })
 
+  // Ask for permission when the user opens the app
   useEffect(() => {
     requestLocation()
   }, [])
@@ -142,7 +148,7 @@ export default function App() {
                 title={item.name}
                 coordinate={{
                   latitude: item.latitude,
-                  longitude: item.longitude,
+                  longitude: item.longitude
                 }}
               />
             )
@@ -168,11 +174,11 @@ export default function App() {
                   <View
                     style={{
                       flex: 1,
-                      justifyContent: "flex-start",
-                      alignItems: "center",
-                      flexDirection: "row",
+                      justifyContent: 'flex-start',
+                      alignItems: 'center',
+                      flexDirection: 'row',
                       width: 10,
-                      height: 25,
+                      height: 25
                     }}
                   >
                     <Button
@@ -182,10 +188,10 @@ export default function App() {
                       style={{
                         flex: 0,
                         padding: 0,
-                        margin: 0,
+                        margin: 0
                       }}
                     >
-                      {" "}
+                      {' '}
                     </Button>
                     <Text style={{ flex: 1 }}>{data.description}</Text>
                   </View>
@@ -201,34 +207,34 @@ export default function App() {
           }}
           query={{
             key: GOOGLE_API_KEY,
-            language: "en",
-            components: "country:nz",
+            language: 'en',
+            components: 'country:nz'
           }}
           styles={{
             container: {
               flex: 1,
-              justifyContent: "center",
-              alignItems: "center",
+              justifyContent: 'center',
+              alignItems: 'center'
             },
             textInputContainer: {
-              backgroundColor: "white",
+              backgroundColor: 'white',
               borderTopWidth: 0,
-              borderBottomColor: "rgba(55, 55, 55, 0.5)",
-              width: "85%",
-              borderRadius: 10,
+              borderBottomColor: 'rgba(55, 55, 55, 0.5)',
+              width: '85%',
+              borderRadius: 10
             },
             textInput: {
               height: 50,
-              color: "#5d5d5d",
-              fontSize: 18,
+              color: '#5d5d5d',
+              fontSize: 18
             },
             predefinedPlacesDescription: {
-              color: "#1faadb",
+              color: '#1faadb'
             },
             listView: {
-              width: "85%",
-              opacity: 0.75,
-            },
+              width: '85%',
+              opacity: 0.75
+            }
           }}
           onFail={(errorMessage) => Alert.alert(errorMessage)}
         />
@@ -236,7 +242,7 @@ export default function App() {
           <View
             style={{
               flex: 1,
-              flexDirection: "row",
+              flexDirection: 'row'
             }}
           >
             <Button
@@ -286,10 +292,10 @@ export default function App() {
           <View
             style={{
               flex: 1,
-              flexDirection: "row-reverse",
-              justifyContent: "center",
-              alignItems: "center",
-              marginTop: 300,
+              flexDirection: 'row-reverse',
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginTop: 300
             }}
           >
             <Pressable onPress={setDirection}>
@@ -310,7 +316,7 @@ export default function App() {
                 labelStyle={{ fontSize: 20, height: 30, width: 100 }}
                 style={{
                   margin: 10,
-                  backgroundColor: "rgba(255,255,255, 0.8)",
+                  backgroundColor: 'rgba(255,255,255, 0.8)'
                 }}
                 uppercase={false}
               >
@@ -329,10 +335,10 @@ export default function App() {
           <View
             style={{
               flex: 2,
-              flexDirection: "row-reverse",
-              justifyContent: "center",
-              alignItems: "center",
-              marginTop: 150,
+              flexDirection: 'row-reverse',
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginTop: 150
             }}
           >
             <Pressable onPress={locateCurrentPosition}>
@@ -357,7 +363,7 @@ export default function App() {
                 labelStyle={{ fontSize: 20, height: 30, width: 100 }}
                 style={{
                   margin: 10,
-                  backgroundColor: "rgba(255,255,255, 0.8)",
+                  backgroundColor: 'rgba(255,255,255, 0.8)'
                 }}
                 uppercase={false}
               >
@@ -376,10 +382,10 @@ export default function App() {
           <View
             style={{
               flex: 1,
-              flexDirection: "row-reverse",
-              justifyContent: "center",
-              alignItems: "center",
-              marginBottom: 60,
+              flexDirection: 'row-reverse',
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginBottom: 60
             }}
           >
             <Pressable
@@ -393,12 +399,12 @@ export default function App() {
                 labelStyle={{ fontSize: 20, height: 30, width: 200 }}
                 style={{
                   margin: 10,
-                  backgroundColor: "rgba(255,255,255, 0.8)",
+                  backgroundColor: 'rgba(255,255,255, 0.8)'
                 }}
                 uppercase={false}
               >
                 <Text>
-                  {currentLocation.latitude.toFixed(2)},{" "}
+                  {currentLocation.latitude.toFixed(2)},{' '}
                   {currentLocation.longitude.toFixed(2)}
                 </Text>
               </Button>
@@ -409,46 +415,3 @@ export default function App() {
     </View>
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    position: "absolute",
-    width: "100%",
-  },
-  map: {
-    width: Dimensions.get("window").width,
-    height: Dimensions.get("window").height,
-  },
-  gps: {
-    flex: 1,
-    position: "absolute",
-    bottom: 70,
-    right: 20,
-  },
-  destinationList: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "flex-start",
-    alignSelf: "stretch",
-    flexDirection: "column",
-  },
-  item: {
-    paddingTop: 15,
-    paddingBottom: 15,
-    fontSize: 18,
-  },
-  buttonLabel: {
-    marginLeft: 30,
-    fontSize: 20,
-    color: "black",
-    opacity: 1,
-  },
-  button: {
-    marginRight: 30,
-    flex: 1,
-    backgroundColor: "rgba(255, 255, 255, 0.4)",
-  },
-})
