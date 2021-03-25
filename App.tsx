@@ -4,10 +4,8 @@ import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplet
 import {
   Text,
   Alert,
-  Dimensions,
   FlatList,
   SafeAreaView,
-  StyleSheet,
   TouchableOpacity,
   View,
   Modal,
