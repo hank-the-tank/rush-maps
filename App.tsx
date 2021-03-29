@@ -250,7 +250,7 @@ export default function App() {
               style={{ flex: 1 }}
               uppercase={false}
             >
-              Destionations
+              Destinations
             </Button>
             <Button
               icon="directions"
