@@ -122,7 +122,7 @@ export default function App() {
 
   return (
     <View>
-      <MapView
+      {/* <MapView
         style={styles.map}
         showsUserLocation={true}
         initialRegion={currentLocation}
@@ -151,7 +151,12 @@ export default function App() {
               />
             )
           })}
-      </MapView>
+      </MapView> */}
+      <Map
+        destinationList={destinationList}
+        currenLocation={currentLocation}
+        waypoints={waypoints}
+      />
       <SafeAreaView style={styles.container}>
         <GooglePlacesAutocomplete
           autoFillOnNotFound={true}

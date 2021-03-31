@@ -4,7 +4,6 @@ export interface destinationProps {
   latitude: number
   longitude: number
 }
-
 export const initialDestinations: destinationProps[] = [
   {
     id: '1',
@@ -31,3 +30,10 @@ export const initialDestinations: destinationProps[] = [
     longitude: 174.78348893641768
   }
 ]
+
+export const initialLocation = {
+  latitude: -36.850000262368575,
+  longitude: 174.77820276942214,
+  latitudeDelta: 0.05,
+  longitudeDelta: 0.02
+}
